@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
-import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -10,14 +9,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Function to initialize CSRF cookie
-  const csrf = () => axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
-
+  // Get logged-in user
   const fetchUser = async () => {
     try {
       const response = await api.get('/me');
       setUser(response.data.data || response.data);
     } catch (error) {
+      console.error(error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -28,20 +26,24 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  // LOGIN
   const login = async (credentials) => {
-    await csrf();
+
     const response = await api.post('/login', credentials);
-    setUser(response.data.user || response.data.data);
+    localStorage.setItem('token', response.data.data.token);
+    await fetchUser();
     return response.data;
   };
 
+  // REGISTER
   const register = async (data) => {
-    await csrf();
     const response = await api.post('/register', data);
-    setUser(response.data.user || response.data.data);
+    localStorage.setItem('token', response.data.data.token);
+    await fetchUser();
     return response.data;
   };
 
+  // LOGOUT
   const logout = async () => {
     try {
       await api.post('/logout');
@@ -53,7 +55,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, fetchUser }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, loading, fetchUser }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );

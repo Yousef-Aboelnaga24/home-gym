@@ -41,6 +41,7 @@ export function ProductDetails() {
           reviews: r.reviews_count || 0
         })));
       } catch (err) {
+        console.error(err);
         setError(true);
       } finally {
         setLoading(false);
@@ -78,15 +79,15 @@ export function ProductDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           {/* Image */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden aspect-square flex items-center justify-center p-8 relative">
-            <button 
+            <button
               onClick={() => toggleWishlist(product)}
               className="absolute right-6 top-6 z-10 rounded-full p-3 bg-zinc-950/80 backdrop-blur-md text-zinc-400 hover:text-yellow-500 transition-colors"
             >
               <Heart className={`h-6 w-6 ${isLiked ? 'fill-yellow-500 text-yellow-500' : ''}`} />
             </button>
-            <img 
-              src={product.image} 
-              alt={product.name} 
+            <img
+              src={product.image}
+              alt={product.name}
               className="max-w-full max-h-full object-contain"
             />
           </div>
@@ -95,7 +96,7 @@ export function ProductDetails() {
           <div className="flex flex-col justify-center">
             <Badge className="w-fit mb-4">{product.category}</Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{product.name}</h1>
-            
+
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center text-yellow-500 font-medium">
                 ★ {product.rating} <span className="text-zinc-500 ml-2">({product.reviews} reviews)</span>
@@ -117,8 +118,8 @@ export function ProductDetails() {
               </ul>
             </div>
 
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="w-full md:w-auto h-14 text-lg font-bold"
               onClick={() => addToCart(product)}
             >

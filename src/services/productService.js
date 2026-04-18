@@ -7,8 +7,7 @@ export const getProducts = async (params = {}) => {
 
 export const getFeaturedProducts = async () => {
   const response = await api.get('/products/featured');
-  // Handle standard generic api response or Laravel resource collections
-  return response.data.data || response.data;
+  return response.data || response.data.data;
 };
 
 export const getProductById = async (id) => {

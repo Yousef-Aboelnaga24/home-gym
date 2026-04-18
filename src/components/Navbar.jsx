@@ -1,12 +1,20 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Dumbbell, Heart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Dumbbell, Heart, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import { Badge } from './ui/Badge';
 
 export function Navbar() {
   const { cartCount } = useCart();
   const { wishlist } = useWishlist();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
@@ -42,6 +50,37 @@ export function Navbar() {
               </span>
             )}
           </Link>
+
+          <div className="h-6 w-px bg-zinc-800 mx-2 hidden sm:block" />
+
+          {user ? (
+            <div className="flex items-center gap-2">
+              {user.role === 'admin' && (
+                <Link to="/admin" className="p-2 text-zinc-300 hover:text-yellow-500 transition-colors" title="Admin Panel">
+                  <LayoutDashboard className="h-5 w-5" />
+                </Link>
+              )}
+              <span className="text-sm font-medium text-zinc-300 hidden sm:block">
+                Hi, {user.name?.split(' ')[0]}
+              </span>
+              <button 
+                onClick={handleLogout}
+                className="p-2 text-zinc-300 hover:text-red-500 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link to="/login" className="text-sm font-medium text-zinc-300 hover:text-yellow-500 transition-colors">
+                Log In
+              </Link>
+              <Link to="/register" className="text-sm font-medium bg-yellow-500 text-black px-4 py-2 rounded-md hover:bg-yellow-400 transition-colors">
+                Sign Up
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </header>

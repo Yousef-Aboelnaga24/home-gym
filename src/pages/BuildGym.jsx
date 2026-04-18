@@ -12,8 +12,8 @@ export function BuildGym() {
   const [searchParams] = useSearchParams();
   const presetBundleId = searchParams.get('preset');
 
-  const [space, setSpace] = useState('medium'); 
-  const [budget, setBudget] = useState('mid'); 
+  const [space, setSpace] = useState('medium');
+  const [budget, setBudget] = useState('mid');
   const [showResults, setShowResults] = useState(!!presetBundleId);
   const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
@@ -88,11 +88,10 @@ export function BuildGym() {
                     <button
                       key={s}
                       onClick={() => setSpace(s)}
-                      className={`p-6 rounded-xl border-2 text-left transition-all ${
-                        space === s 
-                          ? 'border-yellow-500 bg-yellow-500/10' 
+                      className={`p-6 rounded-xl border-2 text-left transition-all ${space === s
+                          ? 'border-yellow-500 bg-yellow-500/10'
                           : 'border-zinc-800 hover:border-zinc-700 bg-zinc-800/50'
-                      }`}
+                        }`}
                     >
                       <h4 className="text-white font-bold capitalize mb-1">{s} Area</h4>
                       <p className="text-zinc-500 text-sm">
@@ -116,11 +115,10 @@ export function BuildGym() {
                     <button
                       key={b}
                       onClick={() => setBudget(b)}
-                      className={`p-6 rounded-xl border-2 text-left transition-all ${
-                        budget === b 
-                          ? 'border-yellow-500 bg-yellow-500/10' 
+                      className={`p-6 rounded-xl border-2 text-left transition-all ${budget === b
+                          ? 'border-yellow-500 bg-yellow-500/10'
                           : 'border-zinc-800 hover:border-zinc-700 bg-zinc-800/50'
-                      }`}
+                        }`}
                     >
                       <h4 className="text-white font-bold capitalize mb-1">{b} Budget</h4>
                       <p className="text-zinc-500 text-sm">
@@ -144,7 +142,7 @@ export function BuildGym() {
           <div className="max-w-6xl mx-auto">
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <button 
+                <button
                   onClick={() => setShowResults(false)}
                   className="text-yellow-500 hover:text-yellow-400 text-sm font-semibold mb-4 block"
                 >
@@ -153,7 +151,7 @@ export function BuildGym() {
                 <h1 className="text-4xl font-extrabold text-white mb-2">Your Recommended Setup</h1>
                 <p className="text-zinc-400 text-lg">"{activeBundle.name}"</p>
               </div>
-              
+
               <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl flex items-center gap-8">
                 <div>
                   <p className="text-zinc-500 text-sm mb-1">Bundle Total</p>
@@ -166,14 +164,14 @@ export function BuildGym() {
             </div>
 
             <div className="mb-12 bg-zinc-900 border border-zinc-800 p-8 rounded-2xl">
-               <h3 className="text-xl font-bold text-white mb-4">Why this setup?</h3>
-               <p className="text-zinc-300 leading-relaxed max-w-4xl">{activeBundle.description}</p>
+              <h3 className="text-xl font-bold text-white mb-4">Why this setup?</h3>
+              <p className="text-zinc-300 leading-relaxed max-w-4xl">{activeBundle.description}</p>
             </div>
 
             <h3 className="text-2xl font-bold text-white mb-6 font-heading border-b border-zinc-800 pb-4">
               Included Equipment
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {loadingProducts ? (
                 <div className="col-span-4 flex justify-center py-10">

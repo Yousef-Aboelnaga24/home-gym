@@ -2,28 +2,33 @@ import { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Search, SlidersHorizontal, Loader2 } from 'lucide-react';
 import { getProducts } from '../services/productService';
+import { getCategories } from '../services/categoryService';
 import { ProductCard } from '../components/ProductCard';
-
-const CATEGORIES = ['All', 'Weights', 'Machines', 'Racks & Benches', 'Accessories'];
 
 export function Shop() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [maxPrice, setMaxPrice] = useState(2000);
+
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
+  // 🔥 Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const result = await getProducts({ per_page: 50 });
         const items = result.data || result;
-        const formatted = items.map(p => ({
+
+        const formatted = items.map((p) => ({
           ...p,
           category: p.category?.name || 'Uncategorized',
           rating: p.average_rating || 5.0,
-          reviews: p.reviews_count || 0
+          reviews: p.reviews_count || 0,
         }));
+
         setProducts(formatted);
       } catch (err) {
         console.error('Failed to fetch products:', err);
@@ -31,30 +36,60 @@ export function Shop() {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
+  // 🔥 Fetch categories (dynamic)
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategories();
+        setCategories(res.data || res);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // 🔥 Filtering (fixed dependency issue)
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchCategory = activeCategory === 'All' || p.category === activeCategory;
+      const matchSearch = p.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+      const matchCategory =
+        activeCategory === 'All' || p.category === activeCategory;
+
       const matchPrice = p.price <= maxPrice;
+
       return matchSearch && matchCategory && matchPrice;
     });
-  }, [searchTerm, activeCategory, maxPrice]);
+  }, [searchTerm, activeCategory, maxPrice, products]);
 
   return (
     <>
       <Helmet>
         <title>Shop Gym Equipment | Home Gym Store</title>
-        <meta name="description" content="Browse our complete collection of home gym equipment." />
+        <meta
+          name="description"
+          content="Browse our complete collection of home gym equipment."
+        />
       </Helmet>
 
       <div className="container mx-auto px-4 py-12">
+        {/* Header */}
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Shop Equipment</h1>
-            <p className="text-zinc-400">Everything you need, built to last.</p>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              Shop Equipment
+            </h1>
+            <p className="text-zinc-400">
+              Everything you need, built to last.
+            </p>
           </div>
 
           <div className="relative w-full md:w-72">
@@ -70,7 +105,7 @@ export function Shop() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar / Filters */}
+          {/* Sidebar */}
           <aside className="w-full lg:w-64 space-y-8 shrink-0">
             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
               <div className="flex items-center gap-2 mb-6 text-white font-semibold border-b border-zinc-800 pb-4">
@@ -78,11 +113,18 @@ export function Shop() {
                 Filters
               </div>
 
+              {/* Category */}
               <div className="mb-8">
-                <h3 className="text-sm font-medium text-zinc-300 mb-4">Category</h3>
+                <h3 className="text-sm font-medium text-zinc-300 mb-4">
+                  Category
+                </h3>
+
                 <div className="space-y-2 text-zinc-400">
-                  {CATEGORIES.map((cat) => (
-                    <label key={cat} className="flex items-center gap-3 cursor-pointer hover:text-yellow-500 transition-colors">
+                  {['All', ...categories.map((c) => c.name)].map((cat) => (
+                    <label
+                      key={cat}
+                      className="flex items-center gap-3 cursor-pointer hover:text-yellow-500 transition-colors"
+                    >
                       <input
                         type="radio"
                         name="category"
@@ -96,8 +138,12 @@ export function Shop() {
                 </div>
               </div>
 
+              {/* Price */}
               <div>
-                <h3 className="text-sm font-medium text-zinc-300 mb-4">Max Price: ${maxPrice}</h3>
+                <h3 className="text-sm font-medium text-zinc-300 mb-4">
+                  Max Price: ${maxPrice}
+                </h3>
+
                 <input
                   type="range"
                   min="0"
@@ -111,7 +157,7 @@ export function Shop() {
             </div>
           </aside>
 
-          {/* Product Grid */}
+          {/* Products */}
           <div className="flex-1">
             {loading ? (
               <div className="flex justify-center items-center py-20">
@@ -125,8 +171,12 @@ export function Shop() {
               </div>
             ) : (
               <div className="text-center py-20 bg-zinc-900 rounded-xl border border-zinc-800">
-                <h3 className="text-xl font-semibold text-white mb-2">No products found</h3>
-                <p className="text-zinc-400">Try adjusting your filters or search term.</p>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No products found
+                </h3>
+                <p className="text-zinc-400">
+                  Try adjusting your filters or search term.
+                </p>
               </div>
             )}
           </div>

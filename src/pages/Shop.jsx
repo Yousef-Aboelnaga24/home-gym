@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Search, SlidersHorizontal, Loader2 } from 'lucide-react';
-import { getProducts } from '../services/productService';
-import { getCategories } from '../services/categoryService';
+import { getProducts } from '../services/ProductService';
+import { getCategories } from '../services/CategoryService';
 import { ProductCard } from '../components/ProductCard';
 
 export function Shop() {

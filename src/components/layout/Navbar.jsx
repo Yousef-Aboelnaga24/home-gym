@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Dumbbell, Heart, User, LogOut, LayoutDashboard } from 'lucide-react';
-import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
-import { useAuth } from '../context/AuthContext';
-import { Badge } from './ui/Badge';
+import { ShoppingCart, Dumbbell, Heart, User, LogOut, LayoutDashboard, ShoppingBag } from 'lucide-react';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
+import { useAuth } from '../../context/AuthContext';
+import { Badge } from '../ui/Badge';
 
 export function Navbar() {
   const { cartCount } = useCart();
@@ -55,6 +55,12 @@ export function Navbar() {
 
           {user ? (
             <div className="flex items-center gap-2">
+              <Link to="/orders" className="p-2 text-zinc-300 hover:text-yellow-500 transition-colors" title="My Orders">
+                <ShoppingBag className="h-5 w-5" />
+              </Link>
+              <Link to="/profile" className="p-2 text-zinc-300 hover:text-yellow-500 transition-colors" title="My Profile">
+                <User className="h-5 w-5" />
+              </Link>
               {user.role === 'admin' && (
                 <Link to="/admin" className="p-2 text-zinc-300 hover:text-yellow-500 transition-colors" title="Admin Panel">
                   <LayoutDashboard className="h-5 w-5" />

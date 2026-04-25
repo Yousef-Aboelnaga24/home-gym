@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 
 export function AdminLayout() {
   const { logout } = useAuth();
-  
+
   const navItems = [
     { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
     { to: "/admin/products", icon: Package, label: "Products" },
@@ -29,7 +29,7 @@ export function AdminLayout() {
               <span className="text-lg font-bold tracking-wider text-white">ADMIN GYM</span>
             </Link>
           </div>
-          
+
           <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => (
               <NavLink
@@ -37,10 +37,9 @@ export function AdminLayout() {
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive 
-                      ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' 
-                      : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+                  `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
+                    ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
                   }`
                 }
               >
@@ -49,7 +48,7 @@ export function AdminLayout() {
               </NavLink>
             ))}
           </nav>
-          
+
           <div className="p-4 border-t border-zinc-900">
             <button
               onClick={logout}

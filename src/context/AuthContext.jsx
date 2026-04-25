@@ -2,21 +2,28 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
-
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Get logged-in user
   const fetchUser = async () => {
-    try {
-      const response = await api.get('/me');
-      setUser(response.data.data || response.data);
-    } catch (error) {
-      console.error(error);
+    const token = localStorage.getItem('token');
+
+    if (!token) {
       setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await api.get('/me');
+      setUser(res.data.data ?? res.data);
+    } catch (err) {
+      console.error(err);
+      setUser(null);
+      localStorage.removeItem('token');
     } finally {
       setLoading(false);
     }
@@ -28,19 +35,28 @@ export const AuthProvider = ({ children }) => {
 
   // LOGIN
   const login = async (credentials) => {
+    const res = await api.post('/login', credentials);
 
-    const response = await api.post('/login', credentials);
-    localStorage.setItem('token', response.data.data.token);
+    const data = res.data.data ?? res.data;
+
+    localStorage.setItem('token', data.token);
+
     await fetchUser();
-    return response.data;
+
+    return data;
   };
 
   // REGISTER
   const register = async (data) => {
-    const response = await api.post('/register', data);
-    localStorage.setItem('token', response.data.data.token);
+    const res = await api.post('/register', data);
+
+    const payload = res.data.data ?? res.data;
+
+    localStorage.setItem('token', payload.token);
+
     await fetchUser();
-    return response.data;
+
+    return payload;
   };
 
   // LOGOUT
@@ -49,14 +65,23 @@ export const AuthProvider = ({ children }) => {
       await api.post('/logout');
     } catch (error) {
       console.error(error);
-    } finally {
-      setUser(null);
     }
+
+    localStorage.removeItem('token');
+    setUser(null);
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loading, fetchUser }}
+      value={{
+        user,
+        setUser,
+        login,
+        register,
+        logout,
+        loading,
+        fetchUser,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>

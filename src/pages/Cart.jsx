@@ -4,16 +4,49 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Trash2, CheckCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
+import { placeOrder } from '../services/orderService';
+import { Loader2 } from 'lucide-react';
 
 export function Cart() {
   const { cart, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
   const [isCheckout, setIsCheckout] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shippingData, setShippingData] = useState({
+    name: '',
+    email: '',
+    address: '',
+    city: '',
+    zip: ''
+  });
 
-  const handleCheckout = (e) => {
+  const handleInputChange = (e) => {
+    setShippingData({ ...shippingData, [e.target.name]: e.target.value });
+  };
+
+  const handleCheckout = async (e) => {
     e.preventDefault();
-    clearCart();
-    setOrderComplete(true);
+    setIsSubmitting(true);
+    try {
+      await placeOrder({
+        items: cart.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        total_amount: cartTotal + (cartTotal > 500 ? 0 : 49.99),
+        shipping_address: `${shippingData.address}, ${shippingData.city}, ${shippingData.zip}`,
+        customer_name: shippingData.name,
+        customer_email: shippingData.email
+      });
+      clearCart();
+      setOrderComplete(true);
+    } catch (err) {
+      console.error('Order failed:', err);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (orderComplete) {
@@ -89,31 +122,33 @@ export function Cart() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-1">Full Name</label>
-                    <input required type="text" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
+                    <input required type="text" name="name" value={shippingData.name} onChange={handleInputChange} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-1">Email</label>
-                    <input required type="email" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
+                    <input required type="email" name="email" value={shippingData.email} onChange={handleInputChange} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-1">Shipping Address</label>
-                    <textarea required rows="3" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors"></textarea>
+                    <textarea required rows="3" name="address" value={shippingData.address} onChange={handleInputChange} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors"></textarea>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-zinc-400 mb-1">City</label>
-                      <input required type="text" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
+                      <input required type="text" name="city" value={shippingData.city} onChange={handleInputChange} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-zinc-400 mb-1">ZIP Code</label>
-                      <input required type="text" className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
+                      <input required type="text" name="zip" value={shippingData.zip} onChange={handleInputChange} className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors" />
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 flex gap-4">
-                  <Button type="button" variant="outline" onClick={() => setIsCheckout(false)}>Back to Cart</Button>
-                  <Button type="submit" form="checkout-form" className="flex-1">Place Order</Button>
+                  <Button type="button" variant="outline" onClick={() => setIsCheckout(false)} disabled={isSubmitting}>Back to Cart</Button>
+                  <Button type="submit" form="checkout-form" className="flex-1" disabled={isSubmitting}>
+                    {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : 'Place Order'}
+                  </Button>
                 </div>
               </form>
             )}

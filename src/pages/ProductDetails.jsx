@@ -7,7 +7,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { ProductCard } from '../components/ProductCard';
-import { getProductById, getProducts } from '../services/productService';
+import { getProductById, getProducts } from '../services/ProductService';
 
 export function ProductDetails() {
   const { id } = useParams();

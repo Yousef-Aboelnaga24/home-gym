@@ -17,17 +17,18 @@ export function Footer() {
         <div>
           <h4 className="text-white font-semibold mb-4">Quick Links</h4>
           <ul className="space-y-2 text-sm text-zinc-400">
-            <li><Link to="/shop" className="hover:text-yellow-500 transition-colors">Shop</Link></li>
-            <li><Link to="/build-gym" className="hover:text-yellow-500 transition-colors">Build Your Gym</Link></li>
-            <li><Link to="/cart" className="hover:text-yellow-500 transition-colors">Cart</Link></li>
+            <li><Link to="/shop" className="hover:text-yellow-500 transition-colors">Shop All</Link></li>
+            <li><Link to="/build-gym" className="hover:text-yellow-500 transition-colors">Gym Builder</Link></li>
+            <li><Link to="/about" className="hover:text-yellow-500 transition-colors">About Us</Link></li>
+            <li><Link to="/profile" className="hover:text-yellow-500 transition-colors">Account</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-white font-semibold mb-4">Support</h4>
           <ul className="space-y-2 text-sm text-zinc-400">
-            <li><a href="#" className="hover:text-yellow-500 transition-colors">FAQ</a></li>
-            <li><a href="#" className="hover:text-yellow-500 transition-colors">Shipping Returns</a></li>
-            <li><a href="#" className="hover:text-yellow-500 transition-colors">Contact Us</a></li>
+            <li><Link to="/contact" className="hover:text-yellow-500 transition-colors">Contact Us</Link></li>
+            <li><Link to="/wishlist" className="hover:text-yellow-500 transition-colors">Wishlist</Link></li>
+            <li><a href="#" className="hover:text-yellow-500 transition-colors">Terms of Service</a></li>
           </ul>
         </div>
       </div>

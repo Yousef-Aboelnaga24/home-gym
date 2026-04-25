@@ -6,7 +6,7 @@ import { bundles } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { ProductCard } from '../components/ProductCard';
-import { getProducts } from '../services/productService';
+import { getProducts } from '../services/ProductService';
 
 export function BuildGym() {
   const [searchParams] = useSearchParams();

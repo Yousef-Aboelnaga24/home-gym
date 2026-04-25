@@ -14,7 +14,11 @@ export function ProtectedRoute({ adminOnly = false }) {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" />;
+  }
+
+  if (!user.email_verified_at) {
+    return <Navigate to="/verify-email" />;
   }
 
   if (adminOnly && user.role !== 'admin') {
